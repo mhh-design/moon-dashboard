@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moon Dashboard — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0f0f0f;
+    --card: #1a1a1a;
+    --card2: #222;
+    --border: #2e2e2e;
+    --text: #f0f0f0;
+    --muted: #888;
+    --accent: #f0a500;
+    --yes: #5aab28;
+    --no: #e03030;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 1.5rem;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .page-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+
+  .back-link:hover { color: var(--text); }
+
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .section h2 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .field { margin-bottom: 0.875rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+
+  .field input {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .field input:focus { outline: none; border-color: var(--accent); }
+
+  .col-heads {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    padding-right: 30px;
+  }
+
+  .col-heads .c1 { flex: 1; }
+  .col-heads .c2 { width: 70px; }
+  .col-heads .c3 { width: 60px; text-align: center; }
+
+  .bill-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .bill-row input {
+    padding: 9px 10px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .bill-row .b1 { flex: 1; }
+  .bill-row .b2 { width: 70px; }
+  .bill-row .b3 { width: 60px; text-align: center; }
+
+  .rmv {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  .rmv:hover { color: var(--no); }
+
+  .add-bill-btn {
+    width: 100%;
+    padding: 9px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    background: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .add-bill-btn:hover { border-color: var(--muted); color: var(--text); }
+
+  .save-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: #0f0f0f;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+
+  .save-btn:hover { opacity: 0.9; }
+
+  .save-btn.secondary {
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 16px;
+  }
+
+  .toast {
+    text-align: center;
+    font-size: 13px;
+    color: var(--yes);
+    margin-bottom: 0.5rem;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .toast.show { opacity: 1; }
+
+  /* Night out */
+  .nightout-block {
+    background: #1a1500;
+    border: 1px solid #3d2e00;
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .nightout-block p { font-size: 14px; color: var(--accent); margin-bottom: 10px; }
+  .nightout-block .time { font-size: 12px; color: #8a6d00; margin-bottom: 12px; }
+
+  .btn-row { display: flex; gap: 8px; }
+
+  .approve-btn {
+    flex: 1;
+    padding: 11px;
+    background: #0d2008;
+    border: 1px solid #2d5a1a;
+    border-radius: 10px;
+    color: var(--yes);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .decline-btn {
+    flex: 1;
+    padding: 11px;
+    background: #1a0808;
+    border: 1px solid #5a1a1a;
+    border-radius: 10px;
+    color: var(--no);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* IOUs */
+  .iou-admin-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .iou-admin-item:last-child { border-bottom: none; }
+  .iou-person { font-weight: 500; color: var(--text); }
+  .iou-desc { font-size: 12px; color: var(--muted); }
+  .iou-date { font-size: 11px; color: #444; margin-top: 2px; }
+  .iou-amt { color: var(--accent); font-weight: 600; margin-right: 10px; }
+
+  /* Connected accounts */
+  .account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .account-item:last-child { border-bottom: none; }
+  .account-label { color: var(--text); font-weight: 500; }
+  .account-id { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .disconnect-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .disconnect-btn:hover { color: var(--no); border-color: var(--no); }
+
+  .connect-btn {
+    width: 100%;
+    padding: 12px;
+    background: #0d1a08;
+    border: 1px solid #2d5a1a;
+    border-radius: 12px;
+    color: var(--yes);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .connect-label {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .connect-label select {
+    flex: 1;
+    padding: 9px 10px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* Login */
+  .login-wrap {
+    max-width: 320px;
+    margin: 4rem auto;
+    text-align: center;
+  }
+
+  .login-wrap .page-title { margin-bottom: 1.5rem; }
+
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: #0f0f0f;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+
+  .err { color: var(--no); font-size: 13px; margin-top: 8px; }
+
+  .logout { text-align: center; margin-top: 1rem; }
+  .logout a { font-size: 13px; color: var(--muted); text-decoration: none; cursor: pointer; }
+  .logout a:hover { color: var(--text); }
+
+  .no-items { font-size: 13px; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div id="login-screen" style="display:none;">
+  <div class="login-wrap">
+    <div class="page-title">MOON<br>ADMIN</div>
+    <div class="section">
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">LOG IN</button>
+      <div class="err" id="login-err"></div>
+    </div>
+  </div>
+</div>
+
+<div id="admin-screen" style="display:none;">
+  <a href="/" class="back-link">← Back to Moon's screen</a>
+  <div class="page-title">ADMIN</div>
+  <div class="page-sub">Only you see this.</div>
+
+  <!-- Night out request -->
+  <div class="section" id="nightout-section" style="display:none;">
+    <h2>🌙 Night Out Request</h2>
+    <div class="nightout-block" id="nightout-block"></div>
+  </div>
+
+  <!-- IOU tracker -->
+  <div class="section">
+    <h2>IOUs — What Moon Owes</h2>
+    <div id="iou-admin-list"><div class="no-items">No IOUs logged.</div></div>
+  </div>
+
+  <!-- Bills -->
+  <div class="section">
+    <h2>Upcoming Bills</h2>
+    <div class="col-heads">
+      <span class="c1">Bill name</span>
+      <span class="c2">Amount</span>
+      <span class="c3">Days out</span>
+    </div>
+    <div id="bill-rows"></div>
+    <button class="add-bill-btn" onclick="addBill()">+ Add a bill</button>
+  </div>
+
+  <!-- Settings -->
+  <div class="section">
+    <h2>Settings</h2>
+    <div class="field">
+      <label>Mustang Fund goal ($)</label>
+      <input type="number" id="f-goal" value="8000" min="0" step="100">
+    </div>
+    <div class="field">
+      <label>Cushion — always keep this in BofA ($)</label>
+      <input type="number" id="f-cushion" value="100" min="0" step="10">
+    </div>
+  </div>
+
+  <button class="save-btn" onclick="saveAll()">SAVE EVERYTHING</button>
+  <div class="toast" id="save-toast">Saved!</div>
+
+  <!-- Bank connections -->
+  <div class="section">
+    <h2>Connected Accounts</h2>
+    <div id="connected-list"></div>
+    <div class="connect-label">
+      <select id="connect-label-select">
+        <option value="bofa_checking">BofA Checking (bills/paycheck)</option>
+        <option value="bofa_savings">BofA Savings (Mustang Fund)</option>
+        <option value="greenlight_fun">Greenlight — Fun Moon</option>
+        <option value="greenlight_gas">Greenlight — Gas Moon</option>
+      </select>
+    </div>
+    <button class="connect-btn" onclick="connectAccount()">+ Connect an Account</button>
+  </div>
+
+  <!-- Change password -->
+  <div class="section">
+    <h2>Change Password</h2>
+    <div class="field">
+      <label>New password</label>
+      <input type="password" id="new-pw" placeholder="At least 4 characters">
+    </div>
+    <button class="save-btn secondary" onclick="changePw()">Update Password</button>
+    <div class="toast" id="pw-toast">Password updated!</div>
+  </div>
+
+  <div class="logout"><a onclick="logout()">Log out</a></div>
+</div>
+
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+var settings = {};
+
+async function doLogin() {
+  const pw = document.getElementById('pw').value;
+  const res = await fetch('/api/admin/login', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ password: pw })
+  });
+  if (res.ok) { showAdmin(); }
+  else { document.getElementById('login-err').textContent = 'Wrong password.'; }
+}
+
+function logout() {
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'block';
+  document.getElementById('pw').value = '';
+}
+
+async function showAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  await loadAdmin();
+}
+
+async function loadAdmin() {
+  const res = await fetch('/api/admin/data');
+  if (!res.ok) { logout(); return; }
+  settings = await res.json();
+
+  document.getElementById('f-goal').value = settings.mustangGoal || 8000;
+  document.getElementById('f-cushion').value = settings.cushion || 100;
+
+  renderBills();
+  renderIOUs();
+  renderNightOut();
+  renderConnected();
+}
+
+function renderBills() {
+  const c = document.getElementById('bill-rows');
+  c.innerHTML = '';
+  if (!settings.bills || !settings.bills.length) {
+    c.innerHTML = '<div class="no-items" style="margin-bottom:8px;">No bills added yet.</div>';
+    return;
+  }
+  settings.bills.forEach((b, i) => {
+    const row = document.createElement('div');
+    row.className = 'bill-row';
+    row.innerHTML =
+      `<input class="b1" type="text" placeholder="e.g. Rent" value="${b.name||''}" oninput="settings.bills[${i}].name=this.value">` +
+      `<input class="b2" type="number" placeholder="$" value="${b.amount||''}" min="0" step="0.01" oninput="settings.bills[${i}].amount=parseFloat(this.value)||0">` +
+      `<input class="b3" type="number" placeholder="days" value="${b.daysUntilDue||''}" min="0" step="1" oninput="settings.bills[${i}].daysUntilDue=parseInt(this.value)||0">` +
+      `<button class="rmv" onclick="removeBill(${i})">×</button>`;
+    c.appendChild(row);
+  });
+}
+
+function addBill() {
+  if (!settings.bills) settings.bills = [];
+  settings.bills.push({ name: '', amount: 0, daysUntilDue: 0 });
+  renderBills();
+}
+
+function removeBill(i) {
+  settings.bills.splice(i, 1);
+  renderBills();
+}
+
+function renderIOUs() {
+  const c = document.getElementById('iou-admin-list');
+  if (!settings.ious || !settings.ious.length) {
+    c.innerHTML = '<div class="no-items">No IOUs logged by Moon.</div>';
+    return;
+  }
+  c.innerHTML = settings.ious.map(i => `
+    <div class="iou-admin-item">
+      <div>
+        <div class="iou-person">Owes ${i.person}</div>
+        ${i.description ? `<div class="iou-desc">${i.description}</div>` : ''}
+        <div class="iou-date">${i.date}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="iou-amt">$${parseFloat(i.amount).toFixed(2)}</div>
+        <button class="rmv" onclick="removeIOU(${i.id})" title="Mark paid">×</button>
+      </div>
+    </div>`).join('');
+}
+
+async function removeIOU(id) {
+  await fetch('/api/admin/iou/remove', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id })
+  });
+  await loadAdmin();
+}
+
+function renderNightOut() {
+  const sec = document.getElementById('nightout-section');
+  const block = document.getElementById('nightout-block');
+  const req = settings.nightOutRequest;
+
+  if (!req || req.status !== 'pending') {
+    sec.style.display = 'none';
+    return;
+  }
+
+  sec.style.display = 'block';
+  const time = new Date(req.requestedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  block.innerHTML = `
+    <p>Moon is requesting $10 for tonight.</p>
+    <div class="time">Requested at ${time}</div>
+    <div class="btn-row">
+      <button class="approve-btn" onclick="respondNightOut('approve')">✓ Approve</button>
+      <button class="decline-btn" onclick="respondNightOut('decline')">✗ Decline</button>
+    </div>`;
+}
+
+async function respondNightOut(action) {
+  await fetch(`/api/admin/nightout/${action}`, { method: 'POST' });
+  await loadAdmin();
+}
+
+function renderConnected() {
+  const c = document.getElementById('connected-list');
+  const accounts = settings.connectedAccounts || [];
+  if (!accounts.length) {
+    c.innerHTML = '<div class="no-items" style="margin-bottom:8px;">No accounts connected yet.</div>';
+    return;
+  }
+  const labels = {
+    bofa_checking: 'BofA Checking',
+    bofa_savings: 'BofA Savings (Mustang Fund)',
+    greenlight_fun: 'Greenlight — Fun Moon',
+    greenlight_gas: 'Greenlight — Gas Moon'
+  };
+  c.innerHTML = accounts.map(a => `
+    <div class="account-item">
+      <div>
+        <div class="account-label">${labels[a.label] || a.label}</div>
+        <div class="account-id">${a.itemId}</div>
+      </div>
+      <button class="disconnect-btn" onclick="disconnectAccount('${a.itemId}')">Disconnect</button>
+    </div>`).join('');
+}
+
+async function disconnectAccount(itemId) {
+  if (!confirm('Disconnect this account?')) return;
+  await fetch('/api/admin/disconnect', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ itemId })
+  });
+  await loadAdmin();
+}
+
+async function connectAccount() {
+  const label = document.getElementById('connect-label-select').value;
+  const ltRes = await fetch('/api/create-link-token', { method: 'POST' });
+  const { link_token } = await ltRes.json();
+  const handler = Plaid.create({
+    token: link_token,
+    onSuccess: async (public_token) => {
+      await fetch('/api/exchange-token', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ public_token, account_label: label })
+      });
+      await loadAdmin();
+    },
+    onExit: () => {}
+  });
+  handler.open();
+}
+
+async function saveAll() {
+  settings.mustangGoal = parseFloat(document.getElementById('f-goal').value) || 8000;
+  settings.cushion = parseFloat(document.getElementById('f-cushion').value) || 100;
+  const res = await fetch('/api/admin/save', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(settings)
+  });
+  if (res.ok) {
+    const t = document.getElementById('save-toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+}
+
+async function changePw() {
+  const pw = document.getElementById('new-pw').value;
+  const res = await fetch('/api/admin/change-password', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ newPassword: pw })
+  });
+  if (res.ok) {
+    document.getElementById('new-pw').value = '';
+    const t = document.getElementById('pw-toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  } else {
+    alert('Password must be at least 4 characters.');
+  }
+}
+
+// Auto-detect session
+fetch('/api/admin/data').then(r => {
+  if (r.ok) showAdmin();
+  else document.getElementById('login-screen').style.display = 'block';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "moon-dashboard",
+  "version": "1.0.0",
+  "description": "Moon's financial dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "plaid": "^25.0.0",
+    "node-cron": "^3.0.3"
+  }
+}
