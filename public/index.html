@@ -5,623 +5,232 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Moon">
 <title>Moon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --yes: #3d7a1e;
-    --yes-bg: #d4edaa;
-    --yes-mid: #5aab28;
-    --wait: #8a5200;
-    --wait-bg: #fde8b0;
-    --wait-mid: #f0a500;
-    --no: #8b1a1a;
-    --no-bg: #fad0d0;
-    --no-mid: #e03030;
     --dark: #0f0f0f;
     --card: #1a1a1a;
     --card2: #222;
-    --border: #2e2e2e;
+    --border: #2a2a2a;
     --text: #f0f0f0;
-    --muted: #888;
+    --muted: #777;
     --accent: #f0a500;
+    --green: #4aaa20;
+    --green-bg: #0d1f08;
+    --green-border: #1e4010;
+    --yellow: #d4920a;
+    --yellow-bg: #1f1800;
+    --yellow-border: #3d3000;
+    --red: #e03030;
+    --red-bg: #1f0808;
+    --red-border: #4a1010;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--dark);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 2rem;
-  }
-
-  .header {
-    padding: 2rem 1.5rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .greeting {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
-    letter-spacing: 2px;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .greeting span {
-    color: var(--accent);
-  }
-
-  .date-line {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 4px;
-    font-weight: 300;
-  }
-
-  .admin-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: var(--muted);
-    font-size: 16px;
-    flex-shrink: 0;
-    margin-top: 6px;
-  }
-
+  body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; padding-bottom: 3rem; }
+  .header { padding: 2rem 1.5rem 0.75rem; display: flex; justify-content: space-between; align-items: flex-start; }
+  .greeting { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 3px; line-height: 1; }
+  .greeting em { color: var(--accent); font-style: normal; }
+  .date-line { font-size: 12px; color: var(--muted); margin-top: 5px; font-weight: 300; }
+  .admin-link { background: var(--card); border: 1px solid var(--border); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--muted); font-size: 15px; margin-top: 8px; flex-shrink: 0; }
   .page { padding: 0 1.25rem; }
-
-  /* ── Decision block ── */
-  .decision-block {
-    border-radius: 20px;
-    padding: 2.5rem 1.75rem 2rem;
-    text-align: center;
-    margin-bottom: 1rem;
-    transition: background 0.4s, border-color 0.4s;
-    border: 1.5px solid transparent;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .decision-block::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.06;
-    background: repeating-linear-gradient(
-      45deg,
-      currentColor,
-      currentColor 1px,
-      transparent 1px,
-      transparent 12px
-    );
-  }
-
-  .decision-block.yes  { background: var(--yes-bg);  border-color: var(--yes-mid);  color: var(--yes); }
-  .decision-block.wait { background: var(--wait-bg); border-color: var(--wait-mid); color: var(--wait); }
-  .decision-block.no   { background: var(--no-bg);   border-color: var(--no-mid);   color: var(--no); }
-  .decision-block.load { background: var(--card);    border-color: var(--border);   color: var(--muted); }
-
-  .big-word {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 120px;
-    line-height: 1;
-    letter-spacing: 4px;
-    margin-bottom: 0.5rem;
-    position: relative;
-  }
-
-  .decision-block.load .big-word { font-size: 60px; letter-spacing: 1px; }
-
-  .decision-headline {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-    position: relative;
-  }
-
-  .decision-reason {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-    position: relative;
-    opacity: 0.85;
-  }
-
-  /* ── Cards ── */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.1rem 1.25rem;
-    margin-bottom: 0.875rem;
-  }
-
-  .card-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-
-  .money-row {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    justify-content: space-between;
-  }
-
-  .money-amount {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    letter-spacing: 1px;
-    line-height: 1;
-    color: var(--text);
-  }
-
-  .money-sub {
-    font-size: 13px;
-    color: var(--muted);
-    text-align: right;
-    line-height: 1.4;
-  }
-
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.875rem;
-    margin-bottom: 0.875rem;
-  }
-
-  .two-col .card {
-    margin-bottom: 0;
-  }
-
-  .two-col .money-amount {
-    font-size: 36px;
-  }
-
-  /* ── Mustang fund ── */
-  .mustang-card {
-    background: linear-gradient(135deg, #1a1500 0%, #2a1f00 100%);
-    border-color: #3d2e00;
-  }
-
-  .mustang-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-  }
-
-  .mustang-amount {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px;
-    letter-spacing: 1px;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .mustang-goal {
-    font-size: 13px;
-    color: #8a6d00;
-    text-align: right;
-    line-height: 1.4;
-  }
-
-  .progress-track {
-    height: 8px;
-    background: #2a1f00;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 6px;
-    border: 1px solid #3d2e00;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #f0a500, #ffd14d);
-    border-radius: 4px;
-    transition: width 1s ease;
-  }
-
-  .progress-label {
-    font-size: 12px;
-    color: #8a6d00;
-  }
-
-  /* ── Bills ── */
-  .bill-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-
-  .bill-item:last-child { border-bottom: none; }
-
-  .bill-name { color: var(--text); font-weight: 500; }
+  .status-strip { border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
+  .status-strip.green { background: var(--green-bg); border-color: var(--green-border); }
+  .status-strip.yellow { background: var(--yellow-bg); border-color: var(--yellow-border); }
+  .status-strip.red { background: var(--red-bg); border-color: var(--red-border); }
+  .status-strip.load { background: var(--card); border-color: var(--border); }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .status-strip.green .status-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status-strip.yellow .status-dot { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .status-strip.red .status-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+  .status-strip.load .status-dot { background: var(--muted); }
+  .status-msg { font-size: 14px; font-weight: 500; line-height: 1.4; }
+  .status-strip.green .status-msg { color: var(--green); }
+  .status-strip.yellow .status-msg { color: var(--yellow); }
+  .status-strip.red .status-msg { color: var(--red); }
+  .status-strip.load .status-msg { color: var(--muted); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-bottom: 0.875rem; }
+  .bal-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 1.1rem; }
+  .bal-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
+  .bal-amount { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 1px; line-height: 1; color: var(--text); }
+  .bal-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+  .mustang-card { background: linear-gradient(135deg, #130f00, #1f1800); border: 1px solid #3a2c00; border-radius: 18px; padding: 1.25rem; margin-bottom: 0.875rem; }
+  .mustang-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.1rem; }
+  .mustang-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #7a6000; margin-bottom: 8px; font-weight: 500; }
+  .mustang-amount { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 1px; line-height: 1; color: var(--accent); }
+  .mustang-right { text-align: right; }
+  .mustang-goal-label { font-size: 11px; color: #7a6000; margin-bottom: 4px; }
+  .mustang-goal-num { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #c48000; letter-spacing: 1px; }
+  .mustang-remaining { font-size: 12px; color: #7a6000; margin-top: 2px; }
+  .progress-track { height: 6px; background: #2a1f00; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #c48000, #f0d060); border-radius: 3px; transition: width 1.2s ease; }
+  .progress-pct { font-size: 12px; color: #7a6000; font-weight: 500; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 1.1rem 1.25rem; margin-bottom: 0.875rem; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; font-weight: 500; }
+  .bill-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .bill-row:last-child { border-bottom: none; }
+  .bill-name { font-size: 15px; font-weight: 500; color: var(--text); }
   .bill-when { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .bill-amt { color: var(--text); font-weight: 600; font-size: 15px; }
-  .bill-urgent .bill-name,
-  .bill-urgent .bill-amt { color: #e03030; }
-  .bill-urgent .bill-when { color: #c02020; }
-
-  .all-clear {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: var(--yes);
-    font-weight: 500;
-  }
-
-  /* ── IOUs ── */
-  .iou-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .iou-item:last-child { border-bottom: none; }
-  .iou-person { font-size: 14px; font-weight: 500; color: var(--text); }
-  .iou-desc { font-size: 12px; color: var(--muted); }
+  .bill-amt { font-size: 16px; font-weight: 600; color: var(--text); }
+  .bill-row.urgent .bill-name, .bill-row.urgent .bill-amt { color: var(--red); }
+  .bill-row.urgent .bill-when { color: #c02020; }
+  .bill-row.warning .bill-name { color: var(--yellow); }
+  .bill-row.warning .bill-when { color: #b07800; }
+  .all-clear-msg { font-size: 14px; color: var(--green); font-weight: 500; }
+  .iou-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .iou-row:last-of-type { border-bottom: none; }
+  .iou-person { font-size: 15px; font-weight: 500; color: var(--text); }
+  .iou-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .iou-right { display: flex; align-items: center; gap: 10px; }
   .iou-amt { font-size: 15px; font-weight: 600; color: var(--accent); }
-  .iou-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 2px 6px; border-radius: 4px; }
-  .iou-remove:hover { color: #e03030; }
-
-  .add-iou-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-  }
-
-  .add-iou-row input {
-    flex: 1;
-    min-width: 80px;
-    padding: 8px 10px;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-  }
-
-  .add-iou-row input:focus { outline: none; border-color: var(--accent); }
-  .add-iou-row input::placeholder { color: var(--muted); }
-
-  .add-iou-btn {
-    padding: 8px 16px;
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--accent);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-  }
-
-  .add-iou-btn:hover { border-color: var(--accent); }
-
-  /* ── Night out button ── */
-  .night-out-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #1a1500, #2a1f00);
-    border: 1.5px solid var(--accent);
-    border-radius: 16px;
-    color: var(--accent);
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    margin-bottom: 0.875rem;
-    transition: all 0.2s;
-  }
-
-  .night-out-btn:hover { background: #2a1f00; }
-  .night-out-btn:disabled { opacity: 0.5; cursor: default; }
-
-  .night-out-status {
-    text-align: center;
-    font-size: 14px;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 0.875rem;
-    font-weight: 500;
-  }
-
-  .night-out-status.pending { background: #1a1500; color: var(--accent); border: 1px solid #3d2e00; }
-  .night-out-status.approved { background: #0d1a08; color: var(--yes); border: 1px solid #2d5a1a; }
-  .night-out-status.declined { background: #1a0808; color: var(--no); border: 1px solid #5a1a1a; }
-
-  /* ── Refresh ── */
-  .refresh-btn {
-    display: block;
-    margin: 1rem auto 0;
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 8px 24px;
-    color: var(--muted);
-    font-size: 14px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-  }
-
+  .iou-x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; padding: 2px 5px; border-radius: 4px; line-height: 1; }
+  .iou-x:hover { color: var(--red); }
+  .iou-add { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .iou-add input { padding: 9px 11px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-family: 'DM Sans', sans-serif; }
+  .iou-add input:focus { outline: none; border-color: var(--accent); }
+  .iou-add input::placeholder { color: var(--muted); }
+  .i-name { flex: 1; min-width: 90px; }
+  .i-amt { width: 72px; }
+  .i-desc { flex: 1; min-width: 90px; }
+  .iou-log-btn { padding: 9px 16px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+  .iou-log-btn:hover { border-color: var(--accent); }
+  .no-items { font-size: 13px; color: var(--muted); font-style: italic; }
+  .night-btn { width: 100%; padding: 15px; background: var(--yellow-bg); border: 1.5px solid var(--accent); border-radius: 16px; color: var(--accent); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; cursor: pointer; margin-bottom: 0.875rem; }
+  .night-status { border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 0.875rem; font-size: 14px; font-weight: 500; text-align: center; }
+  .night-status.pending { background: var(--yellow-bg); border: 1px solid var(--yellow-border); color: var(--yellow); }
+  .night-status.approved { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+  .night-status.declined { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+  .refresh-btn { display: block; margin: 1.25rem auto 0; background: none; border: 1px solid var(--border); border-radius: 50px; padding: 9px 28px; color: var(--muted); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .refresh-btn:hover { border-color: var(--muted); color: var(--text); }
-
-  .last-updated {
-    text-align: center;
-    font-size: 11px;
-    color: #444;
-    margin-top: 8px;
-  }
-
-  /* ── IOU add form toast ── */
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 10px 24px;
-    font-size: 14px;
-    color: var(--text);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-
+  .updated { text-align: center; font-size: 11px; color: #333; margin-top: 8px; }
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); border-radius: 50px; padding: 10px 24px; font-size: 13px; color: var(--text); opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; z-index: 100; }
   .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
-
 <div class="header">
   <div>
-    <div class="greeting">Hey <span>Moon</span></div>
+    <div class="greeting">Hey <em>Moon</em></div>
     <div class="date-line" id="date-line"></div>
   </div>
-  <a href="/admin" class="admin-btn" title="Admin">⚙</a>
+  <a href="/admin" class="admin-link">⚙</a>
 </div>
-
 <div class="page" id="page">
-  <div class="decision-block load">
-    <div class="big-word">...</div>
-    <div class="decision-headline">Loading your money</div>
-    <div class="decision-reason">Just a second</div>
+  <div class="status-strip load">
+    <div class="status-dot"></div>
+    <div class="status-msg">Loading your money...</div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
-// Date
-const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const now = new Date();
-document.getElementById('date-line').textContent =
-  `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now=new Date();
+document.getElementById('date-line').textContent=`${dayNames[now.getDay()]}, ${monthNames[now.getMonth()]} ${now.getDate()}`;
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function fmtBal(n){if(n===null||n===undefined)return'—';return'$'+Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function fmtAmt(n){return'$'+parseFloat(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function freqLabel(b) {
+  const freq = b.frequency || 'monthly';
+  const days = b.daysUntilDue;
+  if (days === 0) return 'Due TODAY';
+  if (days === 1) return 'Due tomorrow';
+  const base = `In ${days} days`;
+  if (freq === 'weekly') return `${base} — every ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][parseInt(b.dayOfWeek)||0]}`;
+  if (freq === 'biweekly') return `${base} — every 2 weeks`;
+  if (freq === 'monthly') { const d=parseInt(b.dayOfMonth)||1; return `${base} — the ${d}${ordinal(d)}`; }
+  if (freq === 'quarterly') return `${base} — quarterly`;
+  if (freq === 'annual') return `${base} — annual`;
+  return base;
 }
 
-function fmt(n) {
-  if (n === null || n === undefined) return '—';
-  return '$' + Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+async function removeIOU(id){await fetch('/api/iou/remove',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load();}
+
+async function addIOU(){
+  const person=document.getElementById('i-name').value.trim();
+  const amount=document.getElementById('i-amt').value.trim();
+  const desc=document.getElementById('i-desc').value.trim();
+  if(!person||!amount){showToast('Enter a name and amount');return;}
+  await fetch('/api/iou/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({person,amount,description:desc})});
+  showToast('IOU logged ✓');load();
 }
 
-async function removeIOU(id) {
-  await fetch('/api/iou/remove', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ id })
-  });
-  load();
-}
+async function requestNightOut(){await fetch('/api/nightout/request',{method:'POST'});showToast('Request sent to Mom ✓');load();}
 
-async function addIOU() {
-  const person = document.getElementById('iou-person').value.trim();
-  const amount = document.getElementById('iou-amount').value.trim();
-  const desc = document.getElementById('iou-desc').value.trim();
-  if (!person || !amount) { showToast('Enter a name and amount'); return; }
-  await fetch('/api/iou/add', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ person, amount, description: desc })
-  });
-  showToast('IOU logged ✓');
-  load();
-}
-
-async function requestNightOut() {
-  await fetch('/api/nightout/request', { method: 'POST' });
-  showToast('Request sent to Mom ✓');
-  load();
-}
-
-async function load() {
-  const page = document.getElementById('page');
-  try {
-    const res = await fetch('/api/status');
-    const d = await res.json();
-
-    if (!d.connected) {
-      page.innerHTML = `
-        <div class="decision-block load">
-          <div class="big-word" style="font-size:50px;letter-spacing:1px">NOT SET UP</div>
-          <div class="decision-headline">Ask Mom to connect your accounts</div>
-          <div class="decision-reason">The dashboard isn't connected yet.</div>
-        </div>`;
+async function load(){
+  const page=document.getElementById('page');
+  try{
+    const res=await fetch('/api/status');
+    const d=await res.json();
+    if(!d.connected){
+      page.innerHTML=`<div class="status-strip load"><div class="status-dot"></div><div class="status-msg">Not connected — ask Mom to set up the accounts</div></div>`;
       return;
     }
+    const sc=d.statusColor||'green';
 
-    const cls = (d.decision || 'load').toLowerCase();
-
-    // Bills HTML
-    let billsHtml = '';
-    if (d.bills && d.bills.length) {
-      const items = d.bills.map(b => {
-        const days = parseInt(b.daysUntilDue) || 0;
-        const urgent = days <= 3;
-        const when = days === 0 ? 'Due TODAY' : days === 1 ? 'Due tomorrow' : `In ${days} days`;
-        return `<div class="bill-item${urgent ? ' bill-urgent' : ''}">
-          <div>
-            <div class="bill-name">${b.name}</div>
-            <div class="bill-when">${when}</div>
-          </div>
-          <div class="bill-amt">${fmt(b.amount)}</div>
-        </div>`;
+    let billsContent='';
+    if(d.bills&&d.bills.length){
+      billsContent=d.bills.sort((a,b)=>a.daysUntilDue-b.daysUntilDue).map(b=>{
+        const urgent=b.daysUntilDue<=5;
+        const warning=!urgent&&b.daysUntilDue<=10;
+        const cls=urgent?'urgent':warning?'warning':'';
+        const when = freqLabel(b);
+        return`<div class="bill-row ${cls}"><div><div class="bill-name">${b.name}</div><div class="bill-when">${when}</div></div><div class="bill-amt">${fmtAmt(b.amount)}</div></div>`;
       }).join('');
-      billsHtml = `<div class="card">
-        <div class="card-label">Bills</div>
-        ${items}
-      </div>`;
-    } else {
-      billsHtml = `<div class="card">
-        <div class="card-label">Bills</div>
-        <div class="all-clear">✓ All bills are covered</div>
-      </div>`;
-    }
+    }else{billsContent=`<div class="all-clear-msg">✓ No bills set up yet</div>`;}
 
-    // IOUs HTML
-    let iouHtml = '';
-    if (d.ious && d.ious.length) {
-      const items = d.ious.map(i => `
-        <div class="iou-item">
-          <div>
-            <div class="iou-person">You owe ${i.person}</div>
-            ${i.description ? `<div class="iou-desc">${i.description}</div>` : ''}
-          </div>
-          <div class="iou-right">
-            <div class="iou-amt">${fmt(i.amount)}</div>
-            <button class="iou-remove" onclick="removeIOU(${i.id})" aria-label="Mark paid">×</button>
-          </div>
-        </div>`).join('');
-      iouHtml = `<div class="card">
-        <div class="card-label">You owe</div>
-        ${items}
-        <div class="add-iou-row">
-          <input type="text" id="iou-person" placeholder="Who?" maxlength="30">
-          <input type="number" id="iou-amount" placeholder="$" min="0" step="0.01" style="width:70px;flex:none;">
-          <input type="text" id="iou-desc" placeholder="For what?" maxlength="40">
-          <button class="add-iou-btn" onclick="addIOU()">+ Add</button>
-        </div>
-      </div>`;
-    } else {
-      iouHtml = `<div class="card">
-        <div class="card-label">IOUs</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">You're all square. No one to pay back.</div>
-        <div class="add-iou-row">
-          <input type="text" id="iou-person" placeholder="Who paid for you?" maxlength="30">
-          <input type="number" id="iou-amount" placeholder="$" min="0" step="0.01" style="width:70px;flex:none;">
-          <input type="text" id="iou-desc" placeholder="For what?" maxlength="40">
-          <button class="add-iou-btn" onclick="addIOU()">+ Log IOU</button>
-        </div>
-      </div>`;
-    }
+    let iouContent='';
+    if(d.ious&&d.ious.length){
+      iouContent=d.ious.map(i=>`<div class="iou-row"><div><div class="iou-person">You owe ${i.person}</div>${i.description?`<div class="iou-desc">${i.description}</div>`:''}</div><div class="iou-right"><div class="iou-amt">${fmtAmt(i.amount)}</div><button class="iou-x" onclick="removeIOU(${i.id})">×</button></div></div>`).join('');
+    }else{iouContent=`<div class="no-items" style="margin-bottom:10px;">You're all square — nobody to pay back.</div>`;}
 
-    // Mustang fund
-    const mustang = d.mustangFund ?? 0;
-    const goal = d.mustangGoal || 8000;
-    const pct = Math.min(100, (mustang / goal) * 100).toFixed(1);
-    const remaining = Math.max(0, goal - mustang);
-    const mustangHtml = `<div class="card mustang-card">
-      <div class="card-label" style="color:#8a6d00;">🏁 Mustang Fund</div>
-      <div class="mustang-top">
-        <div class="mustang-amount">${fmt(mustang)}</div>
-        <div class="mustang-goal">Goal: ${fmt(goal)}<br>${fmt(remaining)} to go</div>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" style="width:${pct}%"></div>
-      </div>
-      <div class="progress-label">${pct}% there</div>
-    </div>`;
+    const mustang=d.mustangFund??0;
+    const goal=d.mustangGoal||8000;
+    const pct=Math.min(100,(mustang/goal)*100);
+    const remaining=Math.max(0,goal-mustang);
 
-    // Night out button
-    let nightHtml = '';
-    if (d.nightOutRequest && d.nightOutRequest.status === 'pending') {
-      nightHtml = `<div class="night-out-status pending">⏳ Waiting for Mom to respond...</div>`;
-    } else if (d.nightOutRequest && d.nightOutRequest.status === 'approved') {
-      nightHtml = `<div class="night-out-status approved">✓ Mom said yes — $10 extra tonight</div>`;
-    } else if (d.nightOutRequest && d.nightOutRequest.status === 'declined') {
-      nightHtml = `<div class="night-out-status declined">Mom said not tonight</div>`;
-    } else if (d.showNightOutButton) {
-      nightHtml = `<button class="night-out-btn" onclick="requestNightOut()">ASK FOR TONIGHT MONEY</button>`;
-    }
+    let nightHtml='';
+    const req=d.nightOutRequest;
+    if(req&&req.status==='pending'){nightHtml=`<div class="night-status pending">⏳ Waiting for Mom...</div>`;}
+    else if(req&&req.status==='approved'){nightHtml=`<div class="night-status approved">✓ Mom said yes — $10 extra tonight</div>`;}
+    else if(req&&req.status==='declined'){nightHtml=`<div class="night-status declined">Not tonight — Mom said no</div>`;}
+    else if(d.showNightOutButton){nightHtml=`<button class="night-btn" onclick="requestNightOut()">ASK FOR TONIGHT MONEY</button>`;}
 
-    page.innerHTML = `
-      <div class="decision-block ${cls}">
-        <div class="big-word">${d.decision || '?'}</div>
-        <div class="decision-headline">${d.headline || ''}</div>
-        <div class="decision-reason">${d.reason || ''}</div>
-      </div>
-
+    page.innerHTML=`
+      <div class="status-strip ${sc}"><div class="status-dot"></div><div class="status-msg">${d.statusMessage||''}</div></div>
       <div class="two-col">
-        <div class="card">
-          <div class="card-label">Fun Money</div>
-          <div class="money-amount">${d.funMoney !== null ? '$' + Math.floor(d.funMoney) : '—'}</div>
-          <div class="money-sub">today's balance</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Gas Card</div>
-          <div class="money-amount">${d.gasMoney !== null ? '$' + Math.floor(d.gasMoney) : '—'}</div>
-          <div class="money-sub">pump only</div>
-        </div>
+        <div class="bal-card"><div class="bal-label">Fun Money</div><div class="bal-amount">${fmtBal(d.funMoney)}</div><div class="bal-sub">today's balance</div></div>
+        <div class="bal-card"><div class="bal-label">Gas Card</div><div class="bal-amount">${fmtBal(d.gasMoney)}</div><div class="bal-sub">pump only</div></div>
       </div>
-
-      ${mustangHtml}
-      ${billsHtml}
+      <div class="mustang-card">
+        <div class="mustang-header">
+          <div><div class="mustang-label">🏁 Mustang Fund</div><div class="mustang-amount">${fmtBal(mustang)}</div></div>
+          <div class="mustang-right"><div class="mustang-goal-label">Goal</div><div class="mustang-goal-num">${fmtBal(goal)}</div><div class="mustang-remaining">${fmtBal(remaining)} to go</div></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct.toFixed(1)}%"></div></div>
+        <div class="progress-pct">${pct.toFixed(1)}% of the way there</div>
+      </div>
+      <div class="section-card"><div class="section-label">Bills</div>${billsContent}</div>
       ${nightHtml}
-      ${iouHtml}
-
-      <button class="refresh-btn" onclick="load()">↻ Refresh</button>
-      <div class="last-updated">Updated just now</div>
-    `;
-
-  } catch(e) {
-    page.innerHTML = `
-      <div class="decision-block load">
-        <div class="big-word" style="font-size:40px;letter-spacing:0">NO CONNECTION</div>
-        <div class="decision-headline">Can't reach the server</div>
-        <div class="decision-reason">Check your internet and try again.</div>
+      <div class="section-card">
+        <div class="section-label">IOUs — What You Owe</div>
+        ${iouContent}
+        <div class="iou-add">
+          <input class="i-name" type="text" id="i-name" placeholder="Who paid?" maxlength="30">
+          <input class="i-amt" type="number" id="i-amt" placeholder="$" min="0" step="0.01">
+          <input class="i-desc" type="text" id="i-desc" placeholder="For what?" maxlength="40">
+          <button class="iou-log-btn" onclick="addIOU()">+ Log IOU</button>
+        </div>
       </div>
-      <button class="refresh-btn" onclick="load()">↻ Try again</button>`;
+      <button class="refresh-btn" onclick="load()">↻ Refresh</button>
+      <div class="updated">Updated just now</div>`;
+  }catch(e){
+    page.innerHTML=`<div class="status-strip red"><div class="status-dot"></div><div class="status-msg">Can't connect — check your internet</div></div><button class="refresh-btn" onclick="load()" style="margin-top:1rem;">↻ Try again</button>`;
   }
 }
-
 load();
 </script>
 </body>
