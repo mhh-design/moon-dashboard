@@ -100,21 +100,21 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 6px;
-    padding-right: 30px;
   }
 
   .col-heads .c1 { flex: 1; }
-  .col-heads .c2 { width: 70px; }
-  .col-heads .c3 { width: 60px; text-align: center; }
+  .col-heads .c2 { width: 80px; }
+  .col-heads .c3 { width: 110px; }
 
   .bill-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     margin-bottom: 8px;
+    flex-wrap: wrap;
   }
 
-  .bill-row input {
+  .bill-row input, .bill-row select {
     padding: 9px 10px;
     background: var(--card2);
     border: 1px solid var(--border);
@@ -122,11 +122,14 @@
     color: var(--text);
     font-size: 13px;
     font-family: 'DM Sans', sans-serif;
+    appearance: none;
   }
 
-  .bill-row .b1 { flex: 1; }
-  .bill-row .b2 { width: 70px; }
-  .bill-row .b3 { width: 60px; text-align: center; }
+  .bill-row input:focus, .bill-row select:focus { outline: none; border-color: var(--accent); }
+  .bill-row .b1 { flex: 1; min-width: 100px; }
+  .bill-row .b2 { width: 72px; }
+  .bill-row .b3 { width: 110px; }
+  .bill-row .b-freq { width: 120px; cursor: pointer; }
 
   .rmv {
     background: none;
@@ -376,7 +379,7 @@
     <div class="col-heads">
       <span class="c1">Bill name</span>
       <span class="c2">Amount</span>
-      <span class="c3">Days out</span>
+      <span class="c3">Frequency + when</span>
     </div>
     <div id="bill-rows"></div>
     <button class="add-bill-btn" onclick="addBill()">+ Add a bill</button>
@@ -467,6 +470,45 @@ async function loadAdmin() {
   renderConnected();
 }
 
+const DOW = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function ord(n){const s=['th','st','nd','rd'];const v=n%100;return s[(v-20)%10]||s[v]||s[0];}
+
+function domOptions(selected) {
+  return Array.from({length:31},(_,n)=>n+1).map(d=>`<option value="${d}" ${parseInt(selected)===d?'selected':''}>${d}${ord(d)}</option>`).join('');
+}
+
+function dowOptions(selected) {
+  return DOW.map((d,i)=>`<option value="${i}" ${parseInt(selected)===i?'selected':''}>${d}</option>`).join('');
+}
+
+function monthOptions(selected) {
+  return MONTHS.map((m,i)=>`<option value="${i}" ${parseInt(selected)===i?'selected':''}>${m}</option>`).join('');
+}
+
+function freqDetail(b, i) {
+  const freq = b.frequency || 'monthly';
+  if (freq === 'monthly') {
+    return `<select class="b3" onchange="settings.bills[${i}].dayOfMonth=parseInt(this.value)" title="Day of month">${domOptions(b.dayOfMonth||1)}</select>`;
+  }
+  if (freq === 'weekly') {
+    return `<select class="b3" onchange="settings.bills[${i}].dayOfWeek=parseInt(this.value)" title="Day of week">${dowOptions(b.dayOfWeek||0)}</select>`;
+  }
+  if (freq === 'biweekly') {
+    return `<input class="b3" type="date" title="Next due date" value="${b.nextDueDate||''}" onchange="settings.bills[${i}].nextDueDate=this.value">`;
+  }
+  if (freq === 'quarterly') {
+    return `<select class="b3" onchange="settings.bills[${i}].startMonth=parseInt(this.value)" title="First due month">${monthOptions(b.startMonth||0)}</select>
+            <select class="b3" style="width:60px;" onchange="settings.bills[${i}].dayOfMonth=parseInt(this.value)" title="Day">${domOptions(b.dayOfMonth||1)}</select>`;
+  }
+  if (freq === 'annual') {
+    return `<select class="b3" onchange="settings.bills[${i}].month=parseInt(this.value)" title="Month">${monthOptions(b.month||0)}</select>
+            <select class="b3" style="width:60px;" onchange="settings.bills[${i}].dayOfMonth=parseInt(this.value)" title="Day">${domOptions(b.dayOfMonth||1)}</select>`;
+  }
+  return '';
+}
+
 function renderBills() {
   const c = document.getElementById('bill-rows');
   c.innerHTML = '';
@@ -475,12 +517,20 @@ function renderBills() {
     return;
   }
   settings.bills.forEach((b, i) => {
+    const freqSel = `<select class="b-freq" onchange="settings.bills[${i}].frequency=this.value;renderBills()">
+      <option value="monthly" ${(b.frequency||'monthly')==='monthly'?'selected':''}>Monthly</option>
+      <option value="weekly" ${b.frequency==='weekly'?'selected':''}>Weekly</option>
+      <option value="biweekly" ${b.frequency==='biweekly'?'selected':''}>Every 2 weeks</option>
+      <option value="quarterly" ${b.frequency==='quarterly'?'selected':''}>Quarterly</option>
+      <option value="annual" ${b.frequency==='annual'?'selected':''}>Annual</option>
+    </select>`;
     const row = document.createElement('div');
     row.className = 'bill-row';
     row.innerHTML =
-      `<input class="b1" type="text" placeholder="e.g. Rent" value="${b.name||''}" oninput="settings.bills[${i}].name=this.value">` +
+      `<input class="b1" type="text" placeholder="Bill name" value="${b.name||''}" oninput="settings.bills[${i}].name=this.value">` +
       `<input class="b2" type="number" placeholder="$" value="${b.amount||''}" min="0" step="0.01" oninput="settings.bills[${i}].amount=parseFloat(this.value)||0">` +
-      `<input class="b3" type="number" placeholder="days" value="${b.daysUntilDue||''}" min="0" step="1" oninput="settings.bills[${i}].daysUntilDue=parseInt(this.value)||0">` +
+      freqSel +
+      freqDetail(b, i) +
       `<button class="rmv" onclick="removeBill(${i})">×</button>`;
     c.appendChild(row);
   });
@@ -488,7 +538,7 @@ function renderBills() {
 
 function addBill() {
   if (!settings.bills) settings.bills = [];
-  settings.bills.push({ name: '', amount: 0, daysUntilDue: 0 });
+  settings.bills.push({ name: '', amount: 0, frequency: 'monthly', dayOfMonth: 1 });
   renderBills();
 }
 
